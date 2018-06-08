@@ -1,0 +1,38 @@
+<html>
+<head>
+	<title></title>
+
+</head>
+<body>
+	<div id="content"></div>
+</body>
+<script type="text/javascript">
+	var ws = new WebSocket('ws://localhost:8080/websocket?uid='+Math.random()*1000);
+  	ws.onopen = function()
+   {
+      // Web Socket 已连接上，使用 send() 方法发送数据
+      
+      document.getElementById("content").innerHTML = ("注册服务...");
+   };
+    
+   ws.onmessage = function (evt) 
+   { 
+      var received_msg = evt.data;
+      document.getElementById("content").innerHTML=document.getElementById("content").innerHTML+"<br />"+evt.data;
+      console.log(evt)
+      // alert("数据已接收...");
+   };
+    
+   ws.onclose = function()
+   { 
+      // 关闭 websocket
+      document.getElementById("content").innerHTML=("连接已关闭..."); 
+   };
+   function sendMessage(data){
+   	var bytes = new Array();
+   	var dataStr = JSON.stringify(data);
+   	ws.send(dataStr);
+   }
+   
+</script>
+</html>

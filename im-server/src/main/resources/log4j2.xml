@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug">
+    <Appenders>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout patter="[%d{HH:mm:ss.SSS}] %c %L %M - %m%n"/>
+        </Console>
+        <!--文件会打印出所有信息，这个log每次运行程序会自动清空，由append属性决定，这个也挺有用的，适合临时测试用-->
+        <File name="log" fileName="F:/logs/im-zhp-test.log" append="false">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </File>
+        <!-- name可以自定义，作用是在Loggers中AppenderRef中使用 -->
+        <!-- fileName定义输出文件名称（当前文件） -->
+        <!-- filePattern定义输出文件名称（文件满足条件后自动截断，生成历史文件） -->
+        <RollingFile name="INFO_ROLLING_FILE"
+                     fileName="F:/logs/im-zhp-info.log"
+                     filePattern="F:/logs/im-zhp-info/%d{yyyy-MM-dd}-debugs.log">
+            <PatternLayout>
+                <Pattern>%d{HH:mm:ss.SSS} %c %L %M - %m%n  </Pattern>
+            </PatternLayout>
+
+            <!-- 文件截断的条件，具体参考文档 -->
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="24"/>
+                <SizeBasedTriggeringPolicy size="250 MB"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="DEBUG_ROLLING_FILE"
+                     fileName="F:/logs/im-zhp-debug.log"
+                     filePattern="F:/logs/%d{yyyy-MM-dd}-debugs.log">
+            <PatternLayout>
+                <Pattern>%d{HH:mm:ss.SSS} %c %L %M - %m%n  </Pattern>
+            </PatternLayout>
+
+            <!-- 文件截断的条件，具体参考文档 -->
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="24"/>
+                <SizeBasedTriggeringPolicy size="250 MB"/>
+            </Policies>
+        </RollingFile>
+
+        <!-- 同一来源的Appender可以定义多个 -->
+        <RollingFile name="ERROR_ROLLING_FILE"
+                     fileName="F:/logs/im-zhp-error.logs"
+                     filePattern="F:/logs/%d{yyyy-MM-dd}-error.log">
+            <!-- 可以通过该参数来设置获取日志的权限 -->
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout>
+                <Pattern>%d{HH:mm:ss.SSS} %c %L %M - %m%n </Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="24"/>
+                <SizeBasedTriggeringPolicy size="250 MB"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <!--然后定义logger，只有定义了logger并引入的appender，appender才会生效-->
+    <Loggers>
+        <!--过滤掉spring和mybatis的一些无用的DEBUG信息-->
+        <logger name="org.springframework" level="INFO"></logger>
+        <logger name="org.mybatis" level="INFO"></logger>
+        <Root level="debug">
+            <AppenderRef ref="CONSOLE"/>
+            <AppenderRef ref="DEBUG_ROLLING_FILE"/>
+            <AppenderRef ref="ERROR_ROLLING_FILE"/>
+            <AppenderRef ref="INFO_ROLLING_FILE"/>
+        </Root>
+    </Loggers>
+</Configuration>
